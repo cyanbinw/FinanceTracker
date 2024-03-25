@@ -15,10 +15,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Common\FinanceTracker.Common\FinanceTracker.Common.csproj" />
     <ProjectReference Include="..\Common\FinanceTracker.DependencyManager\FinanceTracker.DependencyManager.csproj" />
   </ItemGroup>
