@@ -1,12 +1,10 @@
 ﻿using Autofac;
-using Microsoft.AspNetCore.Mvc;
 using System.Reflection;
-using System.Runtime.Loader;
 using Module = Autofac.Module;
 
-namespace FinanceTracker.Service.Autofac
+namespace FinanceTracker.DataPersistenceLayer.Autofac
 {
-    public class AutoRegister : Module
+    public class DataRegister: Module
     {
         protected override void Load(ContainerBuilder builder)
         {
@@ -14,10 +12,6 @@ namespace FinanceTracker.Service.Autofac
             builder.RegisterAssemblyTypes(Assembly.GetExecutingAssembly())
                    .PublicOnly() // 只注册公共类型  
                    .AsImplementedInterfaces(); // 按照实现的接口注册
-
-            builder.RegisterAssemblyTypes(Assembly.GetExecutingAssembly())
-                    .PublicOnly() // 只注册公共类型  
-                    .AsImplementedInterfaces(); // 按照实现的接口注册
         }
     }
 }
