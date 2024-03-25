@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using FinanceTracker.EntityFramework.Data;
+using FinanceTracker.EntityFramework.Entity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinanceTracker.Service.Controllers
@@ -8,16 +9,27 @@ namespace FinanceTracker.Service.Controllers
     public class ValuesController : ControllerBase
     {
         private readonly ILogger<ValuesController> logger;
+        private readonly IBillWorker billWorker;
 
-        public ValuesController(ILogger<ValuesController> logger)
+        public ValuesController(ILogger<ValuesController> logger, IBillWorker billWorker)
         {
             this.logger = logger;
+            this.billWorker = billWorker;
         }
 
         [HttpGet]
         public async Task<IActionResult> TaskAsync()
         {
-            await Task.Delay(500);
+            logger.LogInformation("test");
+            var bill = new Bill
+            {
+                BillName = "test",
+                BillNumber = "asdfjlaskdfj",
+                Date = DateTime.Now,
+                Account = 1234,
+                Type = "asdf"
+            };
+            await billWorker.AddAsync(bill);
             return Ok();
         }
     }

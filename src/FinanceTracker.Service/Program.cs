@@ -1,7 +1,11 @@
-
+using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using FinanceTracker.EntityFramework;
+using FinanceTracker.EntityFramework.Autofac;
+using Microsoft.EntityFrameworkCore;
 using NLog;
 using NLog.Web;
+using System.Reflection;
 
 namespace FinanceTracker.Service
 {
@@ -23,6 +27,20 @@ namespace FinanceTracker.Service
                 // NLog: Setup NLog for Dependency injection
                 builder.Logging.ClearProviders();
                 builder.Host.UseNLog();
+
+                IConfiguration configuration = builder.Configuration;
+
+                // Database
+                builder.Services.AddDbContext<PostgreSqlContext>(options =>
+                    options.UseNpgsql(configuration.GetConnectionString("Postgresql")));
+
+                builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
+                builder.Host.ConfigureContainer<ContainerBuilder>(builder =>
+                {
+                    builder.RegisterAssemblyModules(Assembly.GetExecutingAssembly());
+                    builder.RegisterModule<DataRegister>();
+                });
 
                 // Add services to the container.
                 builder.Services.AddControllers();
