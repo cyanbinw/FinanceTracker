@@ -7,7 +7,7 @@ using NLog.Web.LayoutRenderers;
 
 namespace FinanceTracker.EntityFramework.Entity
 {
-    public class BaseDBWorker<T, R> : AbstractDBWorker<T>  where T : BaseFields, new() where R : class
+    public class BaseDBWorker<T, R> : AbstractDBWorker<T>  where T : IBaseFields, new() where R : class
     {
         protected readonly PostgreSqlContext context;
         protected readonly ILogger<R> logger;
