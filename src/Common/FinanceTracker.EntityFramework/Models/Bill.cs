@@ -2,7 +2,7 @@
 
 namespace FinanceTracker.EntityFramework.Data
 {
-    public class Bill : BasicFields
+    public class Bill : BaseFields
     {
         public string BillNumber { get; set; }
         public string BillName { get; set; }
