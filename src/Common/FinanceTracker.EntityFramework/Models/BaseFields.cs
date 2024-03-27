@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FinanceTracker.EntityFramework.Models
 {
-    public class BasicFields : IBasicFields
+    public class BaseFields : IBaseFields
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -11,7 +11,7 @@ namespace FinanceTracker.EntityFramework.Models
         public DateTime CreateDate { get; set; } = DateTime.Now;
         public DateTime UpdateDate { get; set; } = DateTime.Now;
 
-        public BasicFields() 
+        public BaseFields() 
         {
         }
     }

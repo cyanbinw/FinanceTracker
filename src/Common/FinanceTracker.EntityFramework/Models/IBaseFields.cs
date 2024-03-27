@@ -1,6 +1,6 @@
 ﻿namespace FinanceTracker.EntityFramework.Models
 {
-    public interface IBasicFields
+    public interface IBaseFields
     {
         public int Id { get; set; }
 

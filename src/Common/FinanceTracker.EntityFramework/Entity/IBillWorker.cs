@@ -1,14 +1,8 @@
-﻿using FinanceTracker.EntityFramework.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using FinanceTracker.EntityFramework.Models;
 
 namespace FinanceTracker.EntityFramework.Entity
 {
-    public interface IBillWorker
+    public interface IBillWorker<T> : IBaseWorker<T> where T : IBaseFields, new()
     {
-        public Task AddAsync(Bill data);
     }
 }
