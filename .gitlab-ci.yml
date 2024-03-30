@@ -15,8 +15,6 @@
 
 stages:  
   - build  
-  - test  
-  - deploy  
   
 variables:  
   DOTNET_CLI_TELEMETRY_OPTOUT: 1  
@@ -32,16 +30,4 @@ build-job:
   artifacts:  
     paths:  
       - output/ # 将构建输出作为artifact保存  
-  only:  
-    - merge_requests  
-    - main  
   
-  
-# 在所有阶段完成后执行  
-post-deploy:  
-  stage: deploy  
-  script:  
-    - echo "Deployment finished!"  
-  when: always # 无论成功还是失败都执行  
-  only:  
-    - main
