@@ -15,6 +15,8 @@
 
 stages:  
   - build  
+  - test  
+  - deploy  
   
 variables:  
   DOTNET_CLI_TELEMETRY_OPTOUT: 1  
@@ -23,9 +25,54 @@ variables:
 # 定义构建任务  
 build-job:  
   stage: build  
-  tags: 
+  tags:
     - dev
   script:  
-    - dotnet restore # 还原NuGet包  
-    - dotnet build --configuration Release --output ./output # 构建项目  
+    - cd /home
+    - rm -f FinanceTracker
+    - git clone -b dev git@gitlab.cyanbin.com:cyanbin/FinanceTracker.git
+    - cd FinanceTracker/src
+    - docker build -f FinanceTracker.Service/Dockerfile -t FinanceTracker.Service .
+  only:  
+    - merge_requests  
+    - main  
   
+# 定义测试任务  
+test-job:  
+  stage: test  
+  image: mcr.microsoft.com/dotnet/core/sdk:3.1  
+  needs:  
+    - job: build-job # 依赖build-job的输出  
+  script:  
+    - dotnet test # 运行测试  
+  only:  
+    - merge_requests  
+    - main  
+  
+# 定义部署任务（这里以部署到Docker镜像为例）  
+deploy-job:  
+  stage: deploy  
+  image: docker:latest  
+  services:  
+    - docker:dind # 使用Docker in Docker服务  
+  variables:  
+    DOCKER_DRIVER: overlay2  
+    DOCKER_HOST: tcp://docker:2375  
+    DOCKER_TLS_CERTDIR: ""  
+  needs:  
+    - job: test-job # 依赖test-job的完成  
+  script:  
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY # 登录到GitLab的容器仓库  
+    - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG . # 构建Docker镜像  
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG # 推送Docker镜像到仓库  
+  only:  
+    - main # 只在main分支上部署  
+  
+# 在所有阶段完成后执行  
+post-deploy:  
+  stage: deploy  
+  script:  
+    - echo "Deployment finished!"  
+  when: always # 无论成功还是失败都执行  
+  only:  
+    - main
