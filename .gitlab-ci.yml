@@ -25,11 +25,7 @@ build-job:
   stage: build  
   tags: 
     - dev
-  image: mcr.microsoft.com/dotnet/core/sdk:3.1 # 使用.NET Core SDK镜像  
   script:  
     - dotnet restore # 还原NuGet包  
     - dotnet build --configuration Release --output ./output # 构建项目  
-  artifacts:  
-    paths:  
-      - output/ # 将构建输出作为artifact保存  
   
