@@ -14,6 +14,11 @@ namespace FinanceTracker.EntityFramework
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            OnBillCreaating(modelBuilder);
+        }
+
+        private void OnBillCreaating(ModelBuilder modelBuilder)
+        {
             // 配置Bill实体的主键  
             modelBuilder.Entity<Bill>()
                 .ToTable("Bill")
@@ -41,8 +46,6 @@ namespace FinanceTracker.EntityFramework
                         v => v.ToUniversalTime(), // 写入数据库时转换为UTC  
                         v => DateTime.SpecifyKind(v, DateTimeKind.Utc) // 从数据库读取时指定为UTC Kind  
                      );
-
-            // 其他配置...  
         }
     }
 }

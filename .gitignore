@@ -364,3 +364,6 @@ FodyWeavers.xsd
 **/appsettings.Development.json
 
 **/Properties
+
+# ef core Init
+**/Migrations
