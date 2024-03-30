@@ -30,7 +30,7 @@ build-job:
   script:  
     - cd /home
     - rm -f FinanceTracker
-    - git clone -b dev git@gitlab.cyanbin.com:cyanbin/FinanceTracker.git
+    - git clone -b dev https://gitlab.cyanbin.com/cyanbin/FinanceTracker.git
     - cd FinanceTracker/src
     - docker build -f FinanceTracker.Service/Dockerfile -t FinanceTracker.Service .
   only:  
