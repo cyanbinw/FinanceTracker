@@ -1,8 +1,6 @@
-﻿using FinanceTracker.DataPersistenceLayer.Models;
-
-namespace FinanceTracker.DataPersistenceLayer.Data
+﻿namespace FinanceTracker.Service.Models.BillModels
 {
-    public class Bill : BasicFields
+    public class BillModel
     {
         public string BillNumber { get; set; }
         public string BillName { get; set; }
@@ -11,7 +9,7 @@ namespace FinanceTracker.DataPersistenceLayer.Data
         public DateTime Date { get; set; }
         public string Remarks { get; set; }
 
-        public Bill() 
+        public BillModel()
         {
             this.BillNumber = string.Empty;
             this.BillName = string.Empty;

@@ -9,9 +9,9 @@ namespace FinanceTracker.Service.Controllers
     public class ValuesController : ControllerBase
     {
         private readonly ILogger<ValuesController> logger;
-        private readonly IBillWorker billWorker;
+        private readonly IBillWorker<Bill> billWorker;
 
-        public ValuesController(ILogger<ValuesController> logger, IBillWorker billWorker)
+        public ValuesController(ILogger<ValuesController> logger, IBillWorker<Bill> billWorker)
         {
             this.logger = logger;
             this.billWorker = billWorker;

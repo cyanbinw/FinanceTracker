@@ -7,6 +7,7 @@ namespace FinanceTracker.EntityFramework.Data
         public string BillNumber { get; set; }
         public string BillName { get; set; }
         public string Type { get; set; }
+        public int TypeId { get; set; }
         public decimal Account { get; set; }
         public DateTime Date { get; set; }
         public string Remarks { get; set; }

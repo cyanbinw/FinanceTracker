@@ -2,6 +2,9 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using FinanceTracker.EntityFramework;
 using FinanceTracker.EntityFramework.Autofac;
+using FinanceTracker.Service.Filter;
+using FinanceTracker.Service.Middlewares;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NLog;
 using NLog.Web;
@@ -30,9 +33,14 @@ namespace FinanceTracker.Service
 
                 IConfiguration configuration = builder.Configuration;
 
+                builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
                 // Database
                 builder.Services.AddDbContext<PostgreSqlContext>(options =>
-                    options.UseNpgsql(configuration.GetConnectionString("Postgresql")));
+                    options.UseNpgsql(configuration.GetConnectionString("Postgresql"), c =>
+                    {
+                        c.MigrationsAssembly("FinanceTracker.EntityFramework");
+                    }));
 
                 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -42,8 +50,15 @@ namespace FinanceTracker.Service
                     builder.RegisterModule<DataRegister>();
                 });
 
+                // Turn off default model validation
+                builder.Services.Configure<ApiBehaviorOptions>(opt => opt.SuppressModelStateInvalidFilter = true);
+
                 // Add services to the container.
-                builder.Services.AddControllers();
+                builder.Services.AddControllers(c =>
+                {
+                    // Add custom model validation
+                    c.Filters.Add<ModelValidationAttribute>();
+                });
                 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
                 builder.Services.AddEndpointsApiExplorer();
                 builder.Services.AddOpenApiDocument();

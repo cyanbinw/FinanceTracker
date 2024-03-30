@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FinanceTracker.Common", "Co
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FinanceTracker.DependencyManager", "Common\FinanceTracker.DependencyManager\FinanceTracker.DependencyManager.csproj", "{103FC9F7-102E-4CE5-BE7A-876A2B6167B1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinanceTracker.EntityFramework", "Common\FinanceTracker.EntityFramework\FinanceTracker.EntityFramework.csproj", "{A1BD1C03-5EEE-4A1C-AD47-1E78EB6C7BAD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FinanceTracker.EntityFramework", "Common\FinanceTracker.EntityFramework\FinanceTracker.EntityFramework.csproj", "{A1BD1C03-5EEE-4A1C-AD47-1E78EB6C7BAD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domains", "Domains", "{72EBF3E7-50AC-47BE-8564-FBB52BA58FE0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

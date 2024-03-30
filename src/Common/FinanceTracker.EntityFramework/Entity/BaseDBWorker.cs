@@ -4,10 +4,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using NLog.Web.LayoutRenderers;
+using System.Runtime.InteropServices;
 
 namespace FinanceTracker.EntityFramework.Entity
 {
-    public class BaseDBWorker<T, R> : AbstractDBWorker<T>  where T : IBaseFields, new() where R : class
+    public class BaseDBWorker<T, R> : AbstractDBWorker<T>  where T : class, IBaseFields, new() where R : class
     {
         protected readonly PostgreSqlContext context;
         protected readonly ILogger<R> logger;
