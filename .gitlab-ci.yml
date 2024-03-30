@@ -36,6 +36,7 @@ build-job:
   only:  
     - merge_requests  
     - main  
+    - dev
   
 # 定义测试任务  
 test-job:  
