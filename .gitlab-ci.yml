@@ -13,19 +13,35 @@
 #
 # For more information, see: https://docs.gitlab.com/ee/ci/yaml/index.html#stages
 
-stages:          # List of stages for jobs, and their order of execution
-  - build
-  - test
-  - deploy
-
-build-job:       # This job runs in the build stage, which runs first.
-  stage: build
-  script:
-    - echo "Compiling the code..."
-    - echo "Compile complete."
-
-deploy-job:      # This job runs in the deploy stage.
-  stage: deploy  # It only runs when *both* jobs in the test stage complete successfully.
-  script:
-    - echo "Deploying application..."
-    - echo "Application successfully deployed."
+stages:  
+  - build  
+  - test  
+  - deploy  
+  
+variables:  
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1  
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1  
+  
+# 定义构建任务  
+build-job:  
+  stage: build  
+  image: mcr.microsoft.com/dotnet/core/sdk:3.1 # 使用.NET Core SDK镜像  
+  script:  
+    - dotnet restore # 还原NuGet包  
+    - dotnet build --configuration Release --output ./output # 构建项目  
+  artifacts:  
+    paths:  
+      - output/ # 将构建输出作为artifact保存  
+  only:  
+    - merge_requests  
+    - main  
+  
+  
+# 在所有阶段完成后执行  
+post-deploy:  
+  stage: deploy  
+  script:  
+    - echo "Deployment finished!"  
+  when: always # 无论成功还是失败都执行  
+  only:  
+    - main
