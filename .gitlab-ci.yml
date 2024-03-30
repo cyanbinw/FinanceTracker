@@ -23,6 +23,8 @@ variables:
 # 定义构建任务  
 build-job:  
   stage: build  
+  tags: 
+    - c#
   image: mcr.microsoft.com/dotnet/core/sdk:3.1 # 使用.NET Core SDK镜像  
   script:  
     - dotnet restore # 还原NuGet包  
