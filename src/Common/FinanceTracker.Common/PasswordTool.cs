@@ -3,7 +3,7 @@ using System.Security.Cryptography;
 
 public static class Program
 {
-    public string GeneratePassword()
+    public static string GeneratePassword()
     {
         return GeneratePassword(16);
     }
