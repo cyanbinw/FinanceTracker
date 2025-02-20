@@ -32,18 +32,7 @@ namespace FinanceTracker.BillDomain
         {
             var value = mapper.Map<Bill>(data);
 
-            using (var transaction = context.Database.BeginTransaction())
-            {
-                try
-                {
-                    await billWorker.AddAsync(value);
-                    transaction.Commit();
-                }
-                catch (Exception)
-                {
-                    transaction.Rollback();
-                }
-            }
+            await billWorker.AddAsync(value);
 
             return mapper.Map<BillDetailModel>(value);
         }
@@ -58,21 +47,16 @@ namespace FinanceTracker.BillDomain
             
             var value = await billWorker.GetByIdAsync(data.Id);
             mapper.Map(data, value);
-            using (var transaction = context.Database.BeginTransaction())
+            try
             {
-                try
-                {
-                    await billWorker.UpdateAsync(value);
-                    transaction.Commit();
-                }
-                catch (Exception)
-                {
-                    transaction.Rollback();
-                    return false;
-                }
-
-                return true;
+                await billWorker.UpdateAsync(value);
             }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         public Task<List<BillDetailModel>> GetBillAsync()
