@@ -1,6 +1,8 @@
-﻿namespace FinanceTracker.EntityFramework.Entity
+﻿using FinanceTracker.EntityFramework.Models;
+
+namespace FinanceTracker.EntityFramework.Entity
 {
-    public interface IBaseWorker<T>
+    public interface IBaseWorker<T> where T : IBaseFields, new()
     {
         public Task AddAsync(T data);
 

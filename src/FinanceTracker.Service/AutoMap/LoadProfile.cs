@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using FinanceTracker.EntityFramework.Data;
-using FinanceTracker.Service.Models.BillModels;
+using FinanceTracker.BillDomain.Models.BillModels;
 
 namespace FinanceTracker.Service.AutoMap
 {
@@ -10,6 +10,7 @@ namespace FinanceTracker.Service.AutoMap
         {
             CreateMap<BillModel, Bill>();
             CreateMap<Bill, BillDetailModel>();
+            CreateMap<BillDetailModel, Bill>();
         }
     }
 }

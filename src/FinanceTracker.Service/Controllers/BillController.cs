@@ -1,8 +1,6 @@
-﻿using AutoMapper;
+﻿using FinanceTracker.BillDomain;
+using FinanceTracker.BillDomain.Models.BillModels;
 using FinanceTracker.Common.Responses;
-using FinanceTracker.EntityFramework.Data;
-using FinanceTracker.EntityFramework.Entity;
-using FinanceTracker.Service.Models.BillModels;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -13,18 +11,16 @@ namespace FinanceTracker.Service.Controllers
     public class BillController : ControllerBase
     {
         private readonly ILogger<BillController> logger;
-        private readonly IMapper mapper;
-        private readonly IBillWorker<Bill> billWorker;
+        private readonly IBillRepository billRepository;
 
-        public BillController(ILogger<BillController> logger, IMapper mapper, IBillWorker<Bill> billWorker)
+        public BillController(ILogger<BillController> logger, IBillRepository billRepository)
         {
             this.logger = logger;
-            this.mapper = mapper;
-            this.billWorker = billWorker;
+            this.billRepository = billRepository;
         }
 
         [HttpPost]
-        [ProducesResponseType(typeof(IActionResult), (int)StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(BillDetailModel), (int)StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BadResponse), (int)StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(BadResponse), (int)StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> AddAsync(BillModel bill)
@@ -32,25 +28,22 @@ namespace FinanceTracker.Service.Controllers
             logger.LogInformation("start adding bill...");
             logger.LogInformation($"add data is: {JsonConvert.SerializeObject(bill)}");
 
-
-            Bill data = mapper.Map<Bill>(bill);
-
-            await billWorker.AddAsync(data);
+            var result = await billRepository.CreateBillAsync(bill);
 
             logger.LogInformation("complete adding bill...");
-            return Created();
+            return Ok(result);
         }
 
         [HttpPut("{id}")]
-        [ProducesResponseType(typeof(IActionResult), (int)StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(BillDetailModel), (int)StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BadResponse), (int)StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(BadResponse), (int)StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> UpdateAsync(int id, BillModel bill)
         {
-            Bill data = mapper.Map<Bill>(bill);
+            BillDetailModel data = new BillDetailModel(id, bill);
             data.Id = id;
 
-            await billWorker.UpdateAsync(data);
+            await billRepository.UpdateBillAsync(data);
             return Ok();
         }
 
@@ -60,23 +53,21 @@ namespace FinanceTracker.Service.Controllers
         [ProducesResponseType(typeof(BadResponse), (int)StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> RemoveAsync(int id)
         {
-            var data = await billWorker.GetByIdAsync(id);
+            var data = await billRepository.GetBillByIdAsync(id);
 
-            await billWorker.RemoveAsync(data);
+            await billRepository.DeleteBillAsync(id);
             return Ok();
         }
 
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(IActionResult), (int)StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(BillDetailModel), (int)StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BadResponse), (int)StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(BadResponse), (int)StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetByIdAsync(int id)
         {
-            var data = await billWorker.GetByIdAsync(id);
+            var data = await billRepository.GetBillByIdAsync(id);
 
-            var value = mapper.Map<BillDetailModel>(data);
-
-            return Ok(value);
+            return Ok(data);
         }
     }
 }

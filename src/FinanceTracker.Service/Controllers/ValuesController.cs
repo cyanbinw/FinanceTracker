@@ -1,6 +1,6 @@
-﻿using FinanceTracker.EntityFramework.Data;
-using FinanceTracker.EntityFramework.Entity;
+﻿using FinanceTracker.EntityFramework;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace FinanceTracker.Service.Controllers
 {
@@ -9,27 +9,22 @@ namespace FinanceTracker.Service.Controllers
     public class ValuesController : ControllerBase
     {
         private readonly ILogger<ValuesController> logger;
-        private readonly IBillWorker<Bill> billWorker;
+        private readonly PostgreSqlContext dbContext;
 
-        public ValuesController(ILogger<ValuesController> logger, IBillWorker<Bill> billWorker)
+        public ValuesController(ILogger<ValuesController> logger, PostgreSqlContext dbContext)
         {
             this.logger = logger;
-            this.billWorker = billWorker;
+            this.dbContext = dbContext;
         }
 
-        [HttpGet]
+        [HttpPost("Migrate")]
         public async Task<IActionResult> TaskAsync()
         {
             logger.LogInformation("test");
-            var bill = new Bill
+            if (dbContext.Database.GetPendingMigrations().Any())
             {
-                BillName = "test",
-                BillNumber = "asdfjlaskdfj",
-                Date = DateTime.Now,
-                Account = 1234,
-                Type = "asdf"
-            };
-            await billWorker.AddAsync(bill);
+                await dbContext.Database.MigrateAsync();
+            }
             return Ok();
         }
     }

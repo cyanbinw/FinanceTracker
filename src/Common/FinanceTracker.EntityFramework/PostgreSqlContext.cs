@@ -7,7 +7,7 @@ namespace FinanceTracker.EntityFramework
     {
         public PostgreSqlContext(DbContextOptions<PostgreSqlContext> options) : base(options)
         {
-            Database.Migrate();
+           
         }
 
         public DbSet<Bill> Bills { get; set; }

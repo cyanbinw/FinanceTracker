@@ -1,4 +1,4 @@
-﻿namespace FinanceTracker.Service.Models.BillModels
+﻿namespace FinanceTracker.BillDomain.Models.BillModels
 {
     public class BillModel
     {

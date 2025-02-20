@@ -47,6 +47,8 @@ namespace FinanceTracker.EntityFramework.Entity
         {
             try
             {
+                data.Status = BaseStatusType.Updated;
+                data.UpdateDate = DateTime.Now;
                 context.Update(data);
                 var result = await context.SaveChangesAsync();
             }
