@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 
 namespace FinanceTracker.EntityFramework.Entity
 {
-    public class BillWorker : BaseDBWorker<Bill, BillWorker>, IBillWorker<Bill>
+    public class BillWorker : BaseDBWorker<Bill, BillWorker>, IBillWorker
     {
 
         public BillWorker(ILogger<BillWorker> logger, PostgreSqlContext context) : base(logger, context)

@@ -13,12 +13,12 @@ namespace FinanceTracker.ConsoleApp.Worker
 			try
 			{
 				Console.WriteLine("Start");
+				throw new Exception("error");
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
-
-				throw;
-			}
+                Console.WriteLine("捕获到异常: " + ex.Message);
+            }
 			finally
 			{
 				Console.WriteLine("End");

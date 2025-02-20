@@ -2,8 +2,8 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using FinanceTracker.EntityFramework;
 using FinanceTracker.EntityFramework.Autofac;
+using FinanceTracker.Service.BackgroundServices;
 using FinanceTracker.Service.Filter;
-using FinanceTracker.Service.Middlewares;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NLog;
@@ -33,13 +33,15 @@ namespace FinanceTracker.Service
 
                 IConfiguration configuration = builder.Configuration;
 
+                builder.Services.AddHostedService<WorkerService>();
+
                 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
                 // Database
                 builder.Services.AddDbContext<PostgreSqlContext>(options =>
                     options.UseNpgsql(configuration.GetConnectionString("Postgresql"), c =>
                     {
-                        c.MigrationsAssembly("FinanceTracker.EntityFramework");
+                        c.MigrationsAssembly("FinanceTracker.Service");
                     }));
 
                 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
