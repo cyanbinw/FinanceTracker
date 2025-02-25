@@ -16,16 +16,14 @@ namespace FinanceTracker.BillDomain
     public class BillRepository : IBillRepository
     {
         readonly ILogger<BillRepository> logger;
-        readonly PostgreSqlContext context;
         readonly IBillWorker billWorker;
         readonly IMapper mapper;
 
-        public BillRepository(ILogger<BillRepository> logger ,IBillWorker billWorker, IMapper mapper, PostgreSqlContext context) 
+        public BillRepository(ILogger<BillRepository> logger ,IBillWorker billWorker, IMapper mapper) 
         {
             this.logger = logger;
             this.billWorker = billWorker;
             this.mapper = mapper;
-            this.context = context;
         }
 
         public async Task<BillDetailModel> CreateBillAsync(BillModel data)
@@ -44,7 +42,6 @@ namespace FinanceTracker.BillDomain
 
         public async Task<bool> UpdateBillAsync(BillDetailModel data)
         {
-            
             var value = await billWorker.GetByIdAsync(data.Id);
             mapper.Map(data, value);
             try
@@ -55,6 +52,8 @@ namespace FinanceTracker.BillDomain
             {
                 return false;
             }
+
+            var i = await billWorker.GetByIdAsync(data.Id);
 
             return true;
         }

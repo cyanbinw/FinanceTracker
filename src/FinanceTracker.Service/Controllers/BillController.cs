@@ -1,6 +1,8 @@
 ﻿using FinanceTracker.BillDomain;
 using FinanceTracker.BillDomain.Models.BillModels;
 using FinanceTracker.Common.Responses;
+using FinanceTracker.EntityFramework;
+using FinanceTracker.EntityFramework.Entity;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -42,7 +44,6 @@ namespace FinanceTracker.Service.Controllers
         {
             BillDetailModel data = new BillDetailModel(id, bill);
             data.Id = id;
-
             await billRepository.UpdateBillAsync(data);
             return Ok();
         }
