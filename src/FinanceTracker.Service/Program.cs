@@ -4,6 +4,7 @@ using FinanceTracker.EntityFramework;
 using FinanceTracker.EntityFramework.Autofac;
 using FinanceTracker.Service.BackgroundServices;
 using FinanceTracker.Service.Filter;
+using MassTransit;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NLog;
@@ -36,6 +37,18 @@ namespace FinanceTracker.Service
                 builder.Services.AddHostedService<WorkerService>();
 
                 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
+                builder.Services.AddMassTransit(x =>
+                {
+                    x.UsingRabbitMq((context, cfg) =>
+                    {
+                        cfg.Host("rabbitmq://localhost", h =>
+                        {
+                            h.Username("guest");
+                            h.Password("guest");
+                        });
+                    });
+                });
 
                 // Database
                 builder.Services.AddDbContext<PostgreSqlContext>(options =>

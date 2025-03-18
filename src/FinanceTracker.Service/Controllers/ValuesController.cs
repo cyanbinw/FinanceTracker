@@ -1,4 +1,6 @@
 ﻿using FinanceTracker.EntityFramework;
+using FinanceTracker.MQWorkerService.Models;
+using MassTransit;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,11 +12,13 @@ namespace FinanceTracker.Service.Controllers
     {
         private readonly ILogger<ValuesController> logger;
         private readonly PostgreSqlContext dbContext;
+        private readonly IPublishEndpoint publishEndpoint;
 
-        public ValuesController(ILogger<ValuesController> logger, PostgreSqlContext dbContext)
+        public ValuesController(ILogger<ValuesController> logger, PostgreSqlContext dbContext, IPublishEndpoint publishEndpoint)
         {
             this.logger = logger;
             this.dbContext = dbContext;
+            this.publishEndpoint = publishEndpoint;
         }
 
         [HttpPost("Migrate")]
@@ -25,6 +29,20 @@ namespace FinanceTracker.Service.Controllers
             {
                 await dbContext.Database.MigrateAsync();
             }
+            return Ok();
+        }
+
+        [HttpPost("run")]
+        public ActionResult Run()
+        {
+            var order = new SubmitOrder
+            {
+                OrderId = Guid.NewGuid(),
+                CustomerName = "Alice",
+                Amount = 100.50m
+            };
+            publishEndpoint.Publish<SubmitOrder>(order);
+
             return Ok();
         }
     }
