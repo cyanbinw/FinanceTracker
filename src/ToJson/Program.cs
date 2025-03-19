@@ -75,62 +75,65 @@ namespace ToJson
 
             using (var package = new ExcelPackage(new FileInfo(filePath)))
             {
-                var worksheet = package.Workbook.Worksheets[1]; // 读取第一个 Sheet
-                var rowCount = worksheet.Dimension.Rows;
-                var colCount = worksheet.Dimension.Columns;
-
-                List<Dictionary<string, object>> excelData = new List<Dictionary<string, object>>();
-
-                // 读取表头
-                string[] headers = new string[colCount];
-                for (int col = 1; col <= colCount; col++)
+                for (int i = 0; i < 2; i++) 
                 {
-                    headers[col - 1] = worksheet.Cells[1, col].Text; // 第一行作为字段名
-                }
+                    var worksheet = package.Workbook.Worksheets[i]; // 读取第一个 Sheet
+                    var rowCount = worksheet.Dimension.Rows;
+                    var colCount = worksheet.Dimension.Columns;
 
-                // 读取数据行
-                for (int row = 2; row <= rowCount; row++)
-                {
-                    var rowData = new Dictionary<string, object>();
+                    List<Dictionary<string, object>> excelData = new List<Dictionary<string, object>>();
+
+                    // 读取表头
+                    string[] headers = new string[colCount];
                     for (int col = 1; col <= colCount; col++)
                     {
-                        rowData[headers[col - 1]] = worksheet.Cells[row, col].Text;
+                        headers[col - 1] = worksheet.Cells[1, col].Text; // 第一行作为字段名
                     }
-                    excelData.Add(rowData);
-                }
 
-                // 转换为 JSON
-                string json = JsonConvert.SerializeObject(excelData, Newtonsoft.Json.Formatting.Indented);
-                List<TransactionRecord>? records = JsonConvert.DeserializeObject<List<TransactionRecord>>(json);
-                Console.WriteLine(JsonConvert.SerializeObject(records));
-                if (records == null) { return; }
-
-                string index = "account_records_new";
-                var settings = new ConnectionSettings(new Uri("https://localhost:9200"))
-                               .BasicAuthentication("elastic", "w19941205B")
-                               .DefaultIndex(index) // 设置默认索引
-                               .ServerCertificateValidationCallback(CertificateValidations.AllowAll);
-                var client = new ElasticClient(settings);
-
-                // 2. 创建索引（如果不存在）
-                if (!client.Indices.Exists(index).Exists)
-                {
-                    var createIndexResponse = client.Indices.Create(index, c => c
-                        .Map<TransactionRecord>(m => m.AutoMap()) // 自动映射字段
-                    );
-                }
-
-                foreach (var record in records)
-                {
-                    var indexResponse = client.IndexDocument(record);
-
-                    if (indexResponse.IsValid)
+                    // 读取数据行
+                    for (int row = 2; row <= rowCount; row++)
                     {
-                        Console.WriteLine("插入成功: " + indexResponse.Id);
+                        var rowData = new Dictionary<string, object>();
+                        for (int col = 1; col <= colCount; col++)
+                        {
+                            rowData[headers[col - 1]] = worksheet.Cells[row, col].Text;
+                        }
+                        excelData.Add(rowData);
                     }
-                    else
+
+                    // 转换为 JSON
+                    string json = JsonConvert.SerializeObject(excelData, Newtonsoft.Json.Formatting.Indented);
+                    List<TransactionRecord>? records = JsonConvert.DeserializeObject<List<TransactionRecord>>(json);
+                    Console.WriteLine(JsonConvert.SerializeObject(records));
+                    if (records == null) { return; }
+
+                    string index = "account_records_new";
+                    var settings = new ConnectionSettings(new Uri("https://localhost:9200"))
+                                   .BasicAuthentication("elastic", "w19941205B")
+                                   .DefaultIndex(index) // 设置默认索引
+                                   .ServerCertificateValidationCallback(CertificateValidations.AllowAll);
+                    var client = new ElasticClient(settings);
+
+                    // 2. 创建索引（如果不存在）
+                    if (!client.Indices.Exists(index).Exists)
                     {
-                        Console.WriteLine("插入失败: " + indexResponse.DebugInformation);
+                        var createIndexResponse = client.Indices.Create(index, c => c
+                            .Map<TransactionRecord>(m => m.AutoMap()) // 自动映射字段
+                        );
+                    }
+
+                    foreach (var record in records)
+                    {
+                        var indexResponse = client.IndexDocument(record);
+
+                        if (indexResponse.IsValid)
+                        {
+                            Console.WriteLine("插入成功: " + indexResponse.Id);
+                        }
+                        else
+                        {
+                            Console.WriteLine("插入失败: " + indexResponse.DebugInformation);
+                        }
                     }
                 }
             }
