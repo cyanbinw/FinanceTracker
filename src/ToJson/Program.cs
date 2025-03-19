@@ -21,6 +21,7 @@ namespace ToJson
         private static void csv()
         {
             string[] csvFiles = Directory.GetFiles("./", "*.csv");
+            List<TransactionRecord>? recordsd = new List<TransactionRecord>();
             foreach (string s in csvFiles)
             {
                 List<AccountRecord> records = new List<AccountRecord>();
@@ -35,35 +36,37 @@ namespace ToJson
                 }
 
                 string json = JsonConvert.SerializeObject(records);
-                List<TransactionRecord>? recordsd = JsonConvert.DeserializeObject<List<TransactionRecord>>(json);
-                if (recordsd == null) return;
-                string index = "account_records";
-                var settings = new ConnectionSettings(new Uri("https://localhost:9200"))
-                               .BasicAuthentication("elastic", "w19941205B")
-                               .DefaultIndex(index) // 设置默认索引
-                               .ServerCertificateValidationCallback(CertificateValidations.AllowAll);
-                var client = new ElasticClient(settings);
+                recordsd = JsonConvert.DeserializeObject<List<TransactionRecord>>(json);
+               
+            }
 
-                // 2. 创建索引（如果不存在）
-                if (!client.Indices.Exists(index).Exists)
+            if (recordsd == null) return;
+            string index = "account_records";
+            var settings = new ConnectionSettings(new Uri("https://localhost:9200"))
+                           .BasicAuthentication("elastic", "w19941205B")
+                           .DefaultIndex(index) // 设置默认索引
+                           .ServerCertificateValidationCallback(CertificateValidations.AllowAll);
+            var client = new ElasticClient(settings);
+
+            // 2. 创建索引（如果不存在）
+            if (!client.Indices.Exists(index).Exists)
+            {
+                var createIndexResponse = client.Indices.Create(index, c => c
+                    .Map<AccountRecord>(m => m.AutoMap()) // 自动映射字段
+                );
+            }
+
+            foreach (var record in recordsd)
+            {
+                var indexResponse = client.IndexDocument(record);
+
+                if (indexResponse.IsValid)
                 {
-                    var createIndexResponse = client.Indices.Create(index, c => c
-                        .Map<AccountRecord>(m => m.AutoMap()) // 自动映射字段
-                    );
+                    Console.WriteLine("插入成功: " + indexResponse.Id);
                 }
-
-                foreach (var record in recordsd)
+                else
                 {
-                    var indexResponse = client.IndexDocument(record);
-
-                    if (indexResponse.IsValid)
-                    {
-                        Console.WriteLine("插入成功: " + indexResponse.Id);
-                    }
-                    else
-                    {
-                        Console.WriteLine("插入失败: " + indexResponse.DebugInformation);
-                    }
+                    Console.WriteLine("插入失败: " + indexResponse.DebugInformation);
                 }
             }
         }
