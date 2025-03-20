@@ -127,8 +127,8 @@ namespace ToJson
                     if (records == null) { return; }
 
                     string index = "account_records_new";
-                    var settings = new ConnectionSettings(new Uri("https://localhost:9200"))
-                                   .BasicAuthentication("elastic", "w19941205B")
+                    var settings = new ConnectionSettings(new Uri(headler.URL))
+                                   .BasicAuthentication(headler.User, headler.Password)
                                    .DefaultIndex(index) // 设置默认索引
                                    .ServerCertificateValidationCallback(CertificateValidations.AllowAll);
                     var client = new ElasticClient(settings);
