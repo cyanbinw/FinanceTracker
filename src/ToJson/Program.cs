@@ -1,9 +1,11 @@
 ﻿using CsvHelper;
 using CsvHelper.Configuration.Attributes;
 using Elasticsearch.Net;
+using Microsoft.Extensions.Configuration;
 using Nest;
 using Newtonsoft.Json;
 using OfficeOpenXml;
+using System;
 using System.Globalization;
 using LicenseContext = OfficeOpenXml.LicenseContext;
 
@@ -11,8 +13,22 @@ namespace ToJson
 {
     internal class Program
     {
+        private static ElasticSearchHeadler headler = new ElasticSearchHeadler();
+
+
         static void Main(string[] args)
         {
+            string environment = Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") ?? "Development";
+
+            var config = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory()) // 设置当前目录
+            .AddJsonFile($"appsettings.{environment}.json", optional: true, reloadOnChange: true) // 加载环境配置
+            .AddEnvironmentVariables() // 允许环境变量覆盖配置
+            .Build();
+
+
+            headler = config.GetSection("ElasticSearch").Get<ElasticSearchHeadler>() ?? new ElasticSearchHeadler();
+
             csv();
 
             excel();
@@ -42,8 +58,8 @@ namespace ToJson
 
             if (recordsd == null) return;
             string index = "account_records";
-            var settings = new ConnectionSettings(new Uri("https://localhost:9200"))
-                           .BasicAuthentication("elastic", "w19941205B")
+            var settings = new ConnectionSettings(new Uri(headler.URL))
+                           .BasicAuthentication(headler.User, headler.Password)
                            .DefaultIndex(index) // 设置默认索引
                            .ServerCertificateValidationCallback(CertificateValidations.AllowAll);
             var client = new ElasticClient(settings);
@@ -231,5 +247,19 @@ namespace ToJson
 
         [JsonProperty("备注")]
         public string? Notes { get; set; }  // 备注信息
+    }
+
+    public class ElasticSearchHeadler
+    {
+        public string URL {  get; set; }
+        public string User {  get; set; }
+        public string Password {  get; set; }
+
+        public ElasticSearchHeadler() 
+        {
+            this.URL = string.Empty;
+            this.User = string.Empty;
+            this.Password = string.Empty;
+        }
     }
 }
