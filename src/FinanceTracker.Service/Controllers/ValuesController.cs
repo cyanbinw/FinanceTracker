@@ -45,5 +45,17 @@ namespace FinanceTracker.Service.Controllers
 
             return Ok();
         }
+
+        [HttpGet("test")]
+        public ActionResult Test()
+        {
+            Task.Run(() =>
+            {
+                Console.WriteLine("== 子线程执行开始 ==");
+                Thread.Sleep(1000);
+                Console.WriteLine("== 子线程执行结束 ==");
+            });
+            return Ok();
+        }
     }
 }

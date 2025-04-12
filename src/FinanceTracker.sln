@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinanceTracker.MQWorkerServ
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToJson", "ToJson\ToJson.csproj", "{122D035D-9B93-45BA-A658-4575B7E9A5D6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinanceTracker.ReportViewer", "FinanceTracker.ReportViewer\FinanceTracker.ReportViewer.csproj", "{0366E70A-9844-4836-933F-A09886868EC2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -61,6 +63,10 @@ Global
 		{122D035D-9B93-45BA-A658-4575B7E9A5D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{122D035D-9B93-45BA-A658-4575B7E9A5D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{122D035D-9B93-45BA-A658-4575B7E9A5D6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0366E70A-9844-4836-933F-A09886868EC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0366E70A-9844-4836-933F-A09886868EC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0366E70A-9844-4836-933F-A09886868EC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0366E70A-9844-4836-933F-A09886868EC2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
