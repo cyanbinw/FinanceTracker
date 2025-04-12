@@ -4,6 +4,7 @@ using FinanceTracker.EntityFramework;
 using FinanceTracker.EntityFramework.Autofac;
 using FinanceTracker.Service.BackgroundServices;
 using FinanceTracker.Service.Filter;
+using FinanceTracker.Service.Middlewares;
 using MassTransit;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -84,17 +85,17 @@ namespace FinanceTracker.Service
                 // Configure the HTTP request pipeline.
                 if (app.Environment.IsDevelopment())
                 {
+                    // Add OpenAPI 3.0 document serving middleware
+                    // Available at: http://localhost:<port>/swagger/v1/swagger.json
+                    app.UseOpenApi();
 
+                    // Add web UIs to interact with the document
+                    // Available at: http://localhost:<port>/swagger
+                    app.UseSwaggerUi();
                 }
 
-                // Add OpenAPI 3.0 document serving middleware
-                // Available at: http://localhost:<port>/swagger/v1/swagger.json
-                app.UseOpenApi();
 
-                // Add web UIs to interact with the document
-                // Available at: http://localhost:<port>/swagger
-                app.UseSwaggerUi();
-
+                app.UseMiddleware<TokenBucketMiddleware>();
                 app.UseHttpsRedirection();
 
                 app.UseAuthorization();

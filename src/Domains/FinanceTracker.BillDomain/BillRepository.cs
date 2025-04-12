@@ -63,9 +63,9 @@ namespace FinanceTracker.BillDomain
             throw new NotImplementedException();
         }
 
-        public Task<BillDetailModel> GetBillByIdAsync(int id)
+        public async Task<BillDetailModel> GetBillByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return mapper.Map<BillDetailModel>(await billWorker.GetByIdAsync(id));
         }
 
     }
